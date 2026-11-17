@@ -535,9 +535,11 @@ const CONFIG = {
         { label: "Nikkah", time: "After Zuhr prayer" },
         { label: "Mehndi", time: "After Maghrib, 6 PM to 12 AM" }
       ],
-      name: "Doaba",
-      address: "Jhang",
-      mapLink: ""
+      name: "Doaba Village",
+      address: "Near Jhang, Punjab",
+      // For the exact spot: open Google Maps, find the place, tap Share > Copy link, and paste it between the quotes below.
+      mapLink: "",
+      mapQuery: "Doaba, Jhang District, Punjab, Pakistan"       // used for the map search while mapLink is empty
     },
     {
       title: "Walima",
@@ -563,14 +565,14 @@ const CONFIG = {
 
   // --- Schedule timeline: add, remove or re-order lines. Each line = one event. ---
   schedule: [
-    { time: "After Zuhr",     title: "Nikkah", note: "Saturday 26 Dec, Doaba, Jhang" },
-    { time: "6 PM to 12 AM",  title: "Mehndi", note: "Saturday 26 Dec, after Maghrib, Doaba, Jhang" },
+    { time: "After Zuhr",     title: "Nikkah", note: "Saturday 26 Dec, Doaba Village, near Jhang" },
+    { time: "6 PM to 12 AM",  title: "Mehndi", note: "Saturday 26 Dec, after Maghrib, Doaba Village, near Jhang" },
     { time: "1 PM to 4 PM",   title: "Walima", note: "Sunday 27 Dec, Aslam Palace, Chiniot Mor, Jhang" }
   ],
 
   // --- RSVP: the RSVP section stays hidden until you add a phone number and/or email ---
   rsvpDeadline: "[RSVP BY DATE]",       // e.g. "15 December 2026"  (line is hidden while in [brackets])
-  phone: "+92 3144046083",             // WhatsApp number WITH country code, e.g. "+92 300 1234567"
+  phone: "+92 305 6351806",             // WhatsApp number WITH country code, e.g. "+92 300 1234567"
   email: "[EMAIL ADDRESS]"             // e.g. "name@example.com"
 };
 
@@ -635,7 +637,8 @@ const CONFIG = {
     card.appendChild(make("span", "vname", v.name));
     card.appendChild(make("address", "", v.address));
     const ready = !isPlaceholder(v.name) || !isPlaceholder(v.address);
-    const url = v.mapLink || (ready ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(v.name + ", " + v.address + ", " + CONFIG.mapCountry) : "");
+    const q = v.mapQuery || (v.name + ", " + v.address + ", " + CONFIG.mapCountry);
+    const url = v.mapLink || (ready ? "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q) : "");
     const a = make("a", "btn", "View on Map");
     if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; }
     else { a.href = "#"; a.addEventListener("click", (e) => { e.preventDefault(); alert("The map link will be added soon."); }); }
