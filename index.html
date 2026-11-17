@@ -216,22 +216,8 @@ h2.script { font-size: clamp(2.3rem, 9vw, 3rem); margin-bottom: 1.2rem; }
    8. RSVP
    ============================================================ */
 .rsvp .by { margin-bottom: 1.8rem; }
-.rsvp .quick { display: flex; flex-direction: column; gap: .8rem; align-items: center; margin-bottom: 2.4rem; }
+.rsvp .quick { display: flex; flex-direction: column; gap: .8rem; align-items: center; }
 .rsvp .quick .btn { width: 100%; max-width: 300px; }
-.form { text-align: left; max-width: 400px; margin: 0 auto; background: rgba(255,255,255,.55); border: 1px solid rgba(185,138,85,.45); border-radius: 18px; padding: 1.5rem 1.3rem; }
-.form h3 { font-family: var(--script); font-weight: 400; font-size: 1.9rem; color: var(--wine); text-align: center; margin-bottom: .8rem; }
-.form label { display: block; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin: .9rem 0 .25rem; }
-.form input, .form select, .form textarea {
-  width: 100%; font-family: var(--serif); font-size: 1.1rem; /* 16px+ stops iPhone zooming in */ color: var(--wine);
-  background: var(--cream); border: 1px solid rgba(185,138,85,.7); border-radius: 10px; padding: .65rem .8rem;
-}
-.form input:focus, .form select:focus, .form textarea:focus { outline: 2px solid var(--rose); outline-offset: 1px; }
-.form label.chk { display: flex; align-items: center; gap: .6rem; text-transform: none; letter-spacing: normal; font-size: 1.1rem; font-weight: 500; color: var(--wine); margin: .35rem 0; }
-.form input[type=checkbox] { width: 1.15rem; height: 1.15rem; accent-color: var(--rose); }
-.form .send { display: flex; flex-direction: column; gap: .7rem; margin-top: 1.4rem; }
-.form .send .btn { width: 100%; text-align: center; }
-.note { font-size: .95rem; font-style: italic; margin-top: 1rem; min-height: 1.4em; }
-
 footer { background: var(--wine-deep); color: var(--gold-soft); text-align: center; padding: 3.2rem 1.4rem 3.6rem; }
 footer .script { color: var(--cream); font-size: 2.6rem; }
 footer p { font-size: 1rem; letter-spacing: .12em; margin-top: .5rem; }
@@ -475,23 +461,6 @@ footer p { font-size: 1rem; letter-spacing: .12em; margin-top: .5rem; }
         <a class="btn ghost" id="mailQuick" href="#">RSVP by Email</a>
       </div>
 
-      <form class="form" id="rsvpForm" novalidate>
-        <h3>Or fill in a quick reply</h3>
-        <label for="fName">Your name</label>
-        <input id="fName" name="name" type="text" required autocomplete="name" placeholder="Full name">
-        <label for="fAttend">Will you attend?</label>
-        <select id="fAttend"><option value="yes">Joyfully accept</option><option value="no">Regretfully decline</option></select>
-        <div id="eventsWrap"><label>Which events will you attend?</label><div id="fEvents"></div></div>
-        <label for="fGuests">Number of guests (including you)</label>
-        <input id="fGuests" type="number" min="1" max="20" value="1" inputmode="numeric">
-        <label for="fMsg">Message (optional)</label>
-        <textarea id="fMsg" rows="3" placeholder="Dietary needs, a kind note..."></textarea>
-        <div class="send">
-          <button class="btn wa" type="button" id="sendWa">Send via WhatsApp</button>
-          <button class="btn" type="button" id="sendMail">Send via Email</button>
-        </div>
-        <p class="note" id="rsvpNote" role="status"></p>
-      </form>
     </div>
   </section>
 
@@ -678,10 +647,9 @@ const CONFIG = {
   const digits = String(CONFIG.phone).replace(/\D/g, "");
   const hasPhone = !isPlaceholder(CONFIG.phone) && digits.length > 5;
   const hasEmail = !isPlaceholder(CONFIG.email) && /\S+@\S+/.test(CONFIG.email);
-  const note = $("#rsvpNote");
   if (hasPhone || hasEmail) $("#rsvp").hidden = false;          // show the section only when contact details exist
   if (isPlaceholder(CONFIG.rsvpDeadline)) $("#deadlineLine").hidden = true;
-  [["#waQuick", hasPhone], ["#sendWa", hasPhone], ["#mailQuick", hasEmail], ["#sendMail", hasEmail]]
+  [["#waQuick", hasPhone], ["#mailQuick", hasEmail]]
     .forEach(([sel, ok]) => { $(sel).hidden = !ok; });
 
   const waUrl   = (text) => "https://wa.me/" + digits + "?text=" + encodeURIComponent(text);
@@ -689,31 +657,6 @@ const CONFIG = {
   const quickText = "Assalam o Alaikum! I would like to RSVP to the wedding celebrations of " + couple + " (" + dateRange + ").";
   if (hasPhone) $("#waQuick").href = waUrl(quickText);
   if (hasEmail) $("#mailQuick").href = mailUrl(quickText);
-
-  const fEvents = $("#fEvents");                                  // one tick-box per event
-  CONFIG.schedule.forEach((ev) => {
-    const l = make("label", "chk"); const c = document.createElement("input");
-    c.type = "checkbox"; c.checked = true; c.value = ev.title; l.append(c, document.createTextNode(ev.title)); fEvents.appendChild(l);
-  });
-  $("#fAttend").addEventListener("change", () => { $("#eventsWrap").hidden = $("#fAttend").value !== "yes"; });
-
-  function formText() {
-    const attending = $("#fAttend").value === "yes";
-    const chosen = [...fEvents.querySelectorAll("input:checked")].map((c) => c.value);
-    return "Assalam o Alaikum! This is " + $("#fName").value.trim() + ".\n" +
-      (attending ? "I will gladly attend" : "I am sorry, I am unable to attend") +
-      " the wedding celebrations of " + couple + " (" + dateRange + ").\n" +
-      (attending && chosen.length ? "Events: " + chosen.join(", ") + "\n" : "") +
-      (attending ? "Number of guests: " + $("#fGuests").value + "\n" : "") +
-      ($("#fMsg").value.trim() ? "Message: " + $("#fMsg").value.trim() : "");
-  }
-  function send(kind) {
-    if (!$("#fName").value.trim()) { $("#fName").focus(); note.textContent = "Please enter your name first."; return; }
-    location.href = kind === "wa" ? waUrl(formText()) : mailUrl(formText());
-  }
-  $("#sendWa").addEventListener("click", () => send("wa"));
-  $("#sendMail").addEventListener("click", () => send("mail"));
-  $("#rsvpForm").addEventListener("submit", (e) => e.preventDefault());
 
   /* ---- envelope open ---- */
   const env = $("#envelope");
