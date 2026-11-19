@@ -472,13 +472,13 @@ footer p { font-size: 1rem; letter-spacing: .12em; margin-top: .5rem; }
     <svg class="tear" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0,0 V13 L20,9 L40,12 L60,16 L80,10 L100,8 L120,13 L140,9 L160,15 L180,11 L200,8 L220,13 L240,10 L260,15 L280,9 L300,12 L320,16 L340,10 L360,12 L380,9 L400,13 V0Z"/></svg>
     <div class="reveal">
       <p class="eyebrow">Kindly reply</p>
-      <h2 class="script">RSVP</h2>
+      <h2 class="script">Will You Join Us?</h2>
       <div class="orn"><i></i></div>
-      <p class="by"><span id="deadlineLine">Please let us know by <strong data-cfg="rsvpDeadline">[RSVP BY DATE]</strong><br></span>We would love to celebrate with you.</p>
+      <p class="by"><span id="deadlineLine">Please let us know by <strong data-cfg="rsvpDeadline">[REPLY BY DATE]</strong><br></span>We would love to celebrate with you.</p>
 
       <div class="quick">
-        <a class="btn wa" id="waQuick" href="#">RSVP on WhatsApp</a>
-        <a class="btn ghost" id="mailQuick" href="#">RSVP by Email</a>
+        <a class="btn wa" id="waQuick" href="#">Confirm on WhatsApp</a>
+        <a class="btn ghost" id="mailQuick" href="#">Confirm by Email</a>
       </div>
 
     </div>
@@ -559,8 +559,8 @@ const CONFIG = {
     { time: "1 PM to 4 PM",   title: "Walima", note: "Sunday 27 Dec, Aslam Palace, Chiniot Mor, Jhang" }
   ],
 
-  // --- RSVP: the RSVP section stays hidden until you add a phone number and/or email ---
-  rsvpDeadline: "[RSVP BY DATE]",       // e.g. "15 December 2026"  (line is hidden while in [brackets])
+  // --- Guest replies: the "Will You Join Us?" section stays hidden until you add a phone number and/or email ---
+  rsvpDeadline: "[REPLY BY DATE]",       // e.g. "15 December 2026"  (line is hidden while in [brackets])
   phone: "+92 305 6351806",             // WhatsApp number WITH country code, e.g. "+92 300 1234567"
   email: "[EMAIL ADDRESS]",            // e.g. "name@example.com"
 
@@ -680,8 +680,8 @@ const CONFIG = {
     .forEach(([sel, ok]) => { $(sel).hidden = !ok; });
 
   const waUrl   = (text) => "https://wa.me/" + digits + "?text=" + encodeURIComponent(text);
-  const mailUrl = (text) => "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("RSVP - " + couple) + "&body=" + encodeURIComponent(text);
-  const quickText = "Assalam o Alaikum! I would like to RSVP to the wedding celebrations of " + couple + " (" + dateRange + ").";
+  const mailUrl = (text) => "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Attendance confirmation - " + couple) + "&body=" + encodeURIComponent(text);
+  const quickText = "Assalam o Alaikum! I would like to confirm that I will attend the wedding celebrations of " + couple + " (" + dateRange + ").";
   if (hasPhone) $("#waQuick").href = waUrl(quickText);
   if (hasEmail) $("#mailQuick").href = mailUrl(quickText);
 
